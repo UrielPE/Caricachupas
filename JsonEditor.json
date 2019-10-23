@@ -1,0 +1,307 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "caricachupas",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "RulesIntent",
+                    "slots": [],
+                    "samples": [
+                        "ok dime las reglas",
+                        "di las reglas",
+                        "menciona reglas",
+                        "mencioname las reglas",
+                        "dime las reglas",
+                        "reglas por favor",
+                        "cuales son las reglas"
+                    ]
+                },
+                {
+                    "name": "CategoryIntent",
+                    "slots": [
+                        {
+                            "name": "category",
+                            "type": "CategoryType",
+                            "samples": [
+                                "unas {category}",
+                                "unos {category}",
+                                "les {category}",
+                                "las {category}",
+                                "los {category}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "selecciona {category}",
+                        "seleccionar categoria {category}",
+                        "vamos a categorías",
+                        "ok dime las categorías",
+                        "ok vamos a categorías",
+                        "recuerdame las categorías",
+                        "ok recuerdame las categorías",
+                        "mencioname tus categorías",
+                        "categorías",
+                        "que categorías tienes",
+                        "cuales son las categorías",
+                        "categorías a mi",
+                        "dime las categorías"
+                    ]
+                },
+                {
+                    "name": "GameIntent",
+                    "slots": [
+                        {
+                            "name": "Animaltype",
+                            "type": "AnimalType"
+                        }
+                    ],
+                    "samples": [
+                        "a darle",
+                        "{Animaltype}",
+                        "si vamos a darle",
+                        "ok comencemos",
+                        "ok",
+                        "comencemos",
+                        "vale",
+                        "adelante",
+                        "dale",
+                        "si "
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "CarType",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "TOYOTA"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "PORCHE"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "NISSAN"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "BMW"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "FORD"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "AnimalType",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Acuaticos",
+                                "synonyms": [
+                                    "Peces"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Reptiles",
+                                "synonyms": [
+                                    "Reptil"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Caballos"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Aves"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Perros",
+                                "synonyms": [
+                                    "Perro"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Gatos",
+                                "synonyms": [
+                                    "Michi",
+                                    "Gato"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CategoryType",
+                    "values": [
+                        {
+                            "id": "01",
+                            "name": {
+                                "value": "Autos",
+                                "synonyms": [
+                                    "run run",
+                                    "carros",
+                                    "autos",
+                                    "Run run",
+                                    "Coches",
+                                    "Carros",
+                                    "Auto"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "02",
+                            "name": {
+                                "value": "Animales",
+                                "synonyms": [
+                                    "fifis",
+                                    "animales",
+                                    "Bestia",
+                                    "Bestias",
+                                    "Animalotes",
+                                    "Animalitos",
+                                    "Animal"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "RulesIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": []
+                },
+                {
+                    "name": "CategoryIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "category",
+                            "type": "CategoryType",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.713610007403.532870540209"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.713610007403.532870540209.576995909017"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "GameIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "Animaltype",
+                            "type": "AnimalType",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {}
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.682178700998.1210428740845",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Caricachupas presenta nombres de"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.682178700998.1210428740845.1285967279131",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Ups, perdiste."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.713610007403.532870540209",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Conosco sólo dos categorías, de animales y de autos, elige una"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.713610007403.532870540209.576995909017",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Lo siento, esa categoría no la conosco, prueba de nuevo."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.492766867608.1104456142826",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Si sigues vivo, respondeme"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "Contestame"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "Respondeme"
+                    }
+                ]
+            }
+        ]
+    }
+}
