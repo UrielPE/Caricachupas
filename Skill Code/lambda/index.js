@@ -80,7 +80,7 @@ const CategoryIntentHandler = {
             .speak(speakOutput)
             .getResponse();
     }
-};///end CategoryIntentHandler
+};///end CategoryIntentHandler 
 
 //GameIntentHandler
 const GameIntentHandler = {
@@ -88,22 +88,44 @@ const GameIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'GameIntent';
     },
-    handle( handlerInput ){
-        
-        const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
+    handle( handlerInput )
+    {
+        const { attributesManager, requestEnvelope } = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
         
         //Get values sessionAttributes
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        const sessionAttributes = attributesManager.getSessionAttributes();
         const categoryId = sessionAttributes.categoryId;
         const categoryName = sessionAttributes.category;
+        
+        // speak
+        var speakOutput = null ;
+        
+         // get slot values
+        const {intent} = requestEnvelope.request; 
+        var animalName = getSlotValue(handlerInput.requestEnvelope, 'animalType');
+        sessionAttributes.animalName = animalName;
+        
+        
+        const animalArray = [ 'Caballos', 'Cerdos', 'Aves', 'Gatos', 'Perros', 'Patos' ];
+        if( animalName === undefined ){
             
-        var speakOutput = null  ; 
-        if( categoryId === '02' ){
             speakOutput = requestAttributes.t( 'CARICACHUPAS_MSG', categoryName );
-        }else if( categoryId === '01' ){
-            speakOutput = requestAttributes.t( 'CARICACHUPAS_MSG', categoryName );
+        }else{
+            
+            for( var i = 0; i < animalArray.length; i ++ ){
+                if( animalName === animalArray[i] ){
+                    speakOutput = requestAttributes.t( 'OK!' );
+                    animalName = undefined;
+                    break;
+                }else{
+                    speakOutput = requestAttributes.t( 'MAL!' );
+                    animalName = undefined;
+                    break;
+                }
+            }
         }
-         
+        
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .getResponse();
