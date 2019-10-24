@@ -92,39 +92,34 @@ const GameIntentHandler = {
     {
         const { attributesManager, requestEnvelope } = handlerInput;
         const requestAttributes = attributesManager.getRequestAttributes();
+        const {intent} = handlerInput.requestEnvelope.request;
+        const animalArray = ["caballos", "aves", "perros", "gatos"];
+
         
         //Get values sessionAttributes
         const sessionAttributes = attributesManager.getSessionAttributes();
-        const categoryId = sessionAttributes.categoryId;
         const categoryName = sessionAttributes.category;
+        var speakOutput = null;
+        var animalName = getSlotValue(handlerInput.requestEnvelope, 'Animaltype');
         
-        // speak
-        var speakOutput = null ;
-        
-         // get slot values
-        const {intent} = requestEnvelope.request; 
-        var animalName = getSlotValue(handlerInput.requestEnvelope, 'animalType');
+        if(animalName === undefined && !sessionAttributes.animalName){
+            speakOutput =  requestAttributes.t( 'CARICACHUPAS_MSG', categoryName );
+            return handlerInput.responseBuilder
+                .speak(speakOutput)
+                .getResponse();
+        }
+
         sessionAttributes.animalName = animalName;
-        
-        
-        const animalArray = [ 'Caballos', 'Cerdos', 'Aves', 'Gatos', 'Perros', 'Patos' ];
-        if( animalName === undefined ){
-            
-            speakOutput = requestAttributes.t( 'CARICACHUPAS_MSG', categoryName );
-        }else{
-            
-            for( var i = 0; i < animalArray.length; i ++ ){
-                if( animalName === animalArray[i] ){
-                    speakOutput = requestAttributes.t( 'OK!' );
-                    animalName = undefined;
-                    break;
-                }else{
-                    speakOutput = requestAttributes.t( 'MAL!' );
-                    animalName = undefined;
-                    break;
-                }
+        for(var i = 0; i < animalArray.length; i++){
+            if( animalName === animalArray[i]){
+            speakOutput = requestAttributes.t('OK_MSG');
+            return handlerInput.responseBuilder
+                .speak(speakOutput)
+                .getResponse();
             }
         }
+        
+        speakOutput =  requestAttributes.t( 'LOSE_MSG' );
         
         return handlerInput.responseBuilder
             .speak(speakOutput)
