@@ -13,15 +13,46 @@ const {
     getSlotValue
 } = require('ask-sdk-core');
 
+// these are the permissions needed to get the first name
+const GIVEN_NAME_PERMISSION = ['alexa::profile:given_name:read'];
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
         
-        const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
-        const speakOutput = requestAttributes.t('WELCOME_MESSAGE');
+        const { attributesManager, serviceClientFactory, requestEnvelope } = handlerInput;
+        const sessionAttributes = attributesManager.getSessionAttributes();
+        
+        if( !sessionAttributes['name'] )
+        {
+            //obtener desde apis de Alexa
+            try
+            {
+                const { permissions } = requestEnvelope.context.System.user;
+                if( !permissions )
+                    throw { statusCode: 401, message: 'No permissions available' }; //  there are zone permissions, no point in intializing the API
+                    
+                const upsServiceClient = serviceClientFactory.getUpsServiceClient();
+                const profileName = await upsServiceClient.getProfileGivenName();  
+                
+                if (profileName) { // the user might not have set the name
+                  //save to session and persisten attributes
+                  sessionAttributes['name'] = profileName;
+                } 
+            }catch( error ){
+                console.log(JSON.stringify(error));
+                if (error.statusCode === 401 || error.statusCode === 403) {
+                    // the user needs to enable the permissions for given name, let's send a silent permissions card.
+                  handlerInput.responseBuilder.withAskForPermissionsConsentCard(GIVEN_NAME_PERMISSION);
+                }
+            }
+        }//end if
+        
+        const requestAttributes = attributesManager.getRequestAttributes(); 
+        const name = sessionAttributes[ 'name' ] ? sessionAttributes['name' ] : '';
+        const speakOutput = requestAttributes.t('WELCOME_MESSAGE', name);
         
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -42,7 +73,7 @@ const RulesIntentHandler = {
         
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .reprompt(speakOutput)
             .getResponse();
     }
 };//end RulesIntentHandler
@@ -78,6 +109,7 @@ const CategoryIntentHandler = {
         
         return handlerInput.responseBuilder
             .speak(speakOutput)
+            .reprompt(speakOutput)
             .getResponse();
     }
 };///end CategoryIntentHandler 
@@ -106,6 +138,7 @@ const GameIntentHandler = {
             speakOutput =  requestAttributes.t( 'CARICACHUPAS_MSG', categoryName );
             return handlerInput.responseBuilder
                 .speak(speakOutput)
+                .reprompt(speakOutput)
                 .getResponse();
         }
 
@@ -115,6 +148,7 @@ const GameIntentHandler = {
             speakOutput = requestAttributes.t('OK_MSG');
             return handlerInput.responseBuilder
                 .speak(speakOutput)
+                .reprompt(speakOutput)
                 .getResponse();
             }
         }
@@ -123,6 +157,7 @@ const GameIntentHandler = {
         
         return handlerInput.responseBuilder
             .speak(speakOutput)
+            .reprompt(speakOutput)
             .getResponse();
     }
 };///end GameIntentHandler
@@ -148,7 +183,9 @@ const CancelAndStopIntentHandler = {
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
     },
     handle(handlerInput) {
-        const speakOutput = 'Goodbye!';
+        const { attributesManager, requestEnvelope } = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const speakOutput = requestAttributes.t( 'GOODBYE_MSG' );
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .getResponse();
@@ -223,4 +260,5 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addErrorHandlers(
         ErrorHandler
     )
+    .withApiClient(new Alexa.DefaultApiClient() )
     .lambda();
